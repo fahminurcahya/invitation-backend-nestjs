@@ -1,0 +1,20 @@
+version: '3.9'
+
+services:
+  invitation-nest:
+    build: .
+    ports:
+      - '3000:3000'
+    volumes:
+      - ./src:/usr/src/app/src
+    depends_on:
+      - mysql
+    command: pnpm run start:dev
+
+  mysql:
+    image: mysql
+    container_name: mysql-container
+    environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
+    ports:
+      - '3306:3306'

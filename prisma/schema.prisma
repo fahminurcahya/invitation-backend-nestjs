@@ -11,25 +11,170 @@ datasource db {
 }
 
 model role {
-  id         Int      @id @default(autoincrement())
-  desc       String   @db.VarChar(50)
-  created_at DateTime @default(now())
-  users      users[]
+  id    Int     @id @default(autoincrement())
+  desc  String  @db.VarChar(50)
+  users users[]
 }
 
 model config {
-  id             Int      @id @default(autoincrement())
-  icon           String   @db.VarChar(100)
-  loading_screen String   @db.VarChar(100)
-  created_at     DateTime @default(now())
+  id             Int    @id @default(autoincrement())
+  icon           String @db.VarChar(100)
+  loading_screen String @db.VarChar(100)
 }
 
 model users {
-  id         Int      @id @default(autoincrement())
-  name       String   @db.VarChar(100)
-  email      String   @unique @db.VarChar(100)
-  password   String   @db.VarChar(200)
-  role       role     @relation(fields: [role_id], references: [id])
+  id         Int       @id @default(autoincrement())
+  name       String    @db.VarChar(100)
+  email      String    @unique @db.VarChar(100)
+  password   String    @db.VarChar(200)
+  role       role      @relation(fields: [role_id], references: [id])
   role_id    Int
-  created_at DateTime @default(now())
+  created_at DateTime  @default(now())
+  rules      rules?
+  guest      guest[]
+  events     events[]
+  album      album[]
+  stories    stories[]
+  couple     couple?
+  parent     parent?
+  wallet     wallet[]
+  comment    comment[]
+  media      media?
+  quotes     quotes?
+}
+
+// theme
+model theme_categories {
+  id     Int      @id @default(autoincrement())
+  desc   String   @db.VarChar(100)
+  themes themes[]
+}
+
+model themes {
+  id                Int              @id @default(autoincrement())
+  desc              String           @db.VarChar(100)
+  theme_code        String           @db.VarChar(50)
+  theme_category_id Int
+  theme_category    theme_categories @relation(fields: [theme_category_id], references: [id])
+  created_at        DateTime         @default(now())
+}
+
+model rules {
+  id             Int     @id @default(autoincrement())
+  user_id        Int     @unique
+  user           users   @relation(fields: [user_id], references: [id])
+  cover          Boolean @default(true)
+  mempelai       Boolean @default(true)
+  event          Boolean @default(true)
+  rsvp           Boolean @default(true)
+  gallery        Boolean @default(true)
+  story          Boolean @default(true)
+  quote          Boolean @default(true)
+  digital_wallet Boolean @default(true)
+  gift           Boolean @default(true)
+}
+
+model guest {
+  id      Int    @id @default(autoincrement())
+  desc    String @db.VarChar(100)
+  user_id Int
+  user    users  @relation(fields: [user_id], references: [id])
+}
+
+model events {
+  id              Int    @id @default(autoincrement())
+  user_id         Int
+  user            users  @relation(fields: [user_id], references: [id])
+  tgl_akad        String @db.VarChar(50)
+  tgl_resepsi     String @db.VarChar(50)
+  jam_akad        String @db.VarChar(100)
+  jam_resepsi     String @db.VarChar(100)
+  tempat_akad     String @db.VarChar(200)
+  tempat_resepsi  String @db.VarChar(200)
+  alamat_akad     String @db.VarChar(200)
+  alamat_resepsi  String @db.VarChar(200)
+  url_map_akad    String @db.VarChar(100)
+  url_map_resepsi String @db.VarChar(100)
+}
+
+model album {
+  id      Int    @id @default(autoincrement())
+  user_id Int
+  user    users  @relation(fields: [user_id], references: [id])
+  path    String @db.VarChar(100)
+}
+
+model stories {
+  id         Int    @id @default(autoincrement())
+  user_id    Int
+  user       users  @relation(fields: [user_id], references: [id])
+  story_date String @db.VarChar(100)
+  title      String @db.VarChar(100)
+  content    String @db.Text
+}
+
+model couple {
+  id          Int    @id @default(autoincrement())
+  user_id     Int    @unique
+  user        users  @relation(fields: [user_id], references: [id])
+  cover_photo String @db.VarChar(100)
+
+  groom_name         String @db.VarChar(100)
+  groom_fullname     String @db.VarChar(100)
+  groom_photo        String @db.VarChar(100)
+  groom_social_media String @db.VarChar(100)
+
+  bride_name         String @db.VarChar(100)
+  bride_photo        String @db.VarChar(100)
+  bride_fullname     String @db.VarChar(100)
+  bride_social_media String @db.VarChar(100)
+}
+
+model parent {
+  id                  Int    @id @default(autoincrement())
+  user_id             Int    @unique
+  user                users  @relation(fields: [user_id], references: [id])
+  father_of_the_groom String @db.VarChar(100)
+  mother_of_the_groom String @db.VarChar(100)
+  father_of_the_bride String @db.VarChar(100)
+  mother_of_the_bride String @db.VarChar(100)
+}
+
+model wallet {
+  id          Int    @id @default(autoincrement())
+  user_id     Int
+  user        users  @relation(fields: [user_id], references: [id])
+  name        String @db.VarChar(100)
+  bank        String @db.VarChar(100)
+  acct_number String @db.VarChar(100)
+}
+
+model comment {
+  id      Int     @id @default(autoincrement())
+  user_id Int
+  user    users   @relation(fields: [user_id], references: [id])
+  name    String  @db.VarChar(100)
+  content String  @db.VarChar(200)
+  present Present
+}
+
+model media {
+  id        Int    @id @default(autoincrement())
+  user_id   Int    @unique
+  user      users  @relation(fields: [user_id], references: [id])
+  song      String @db.VarChar(100)
+  vidio_url String @db.VarChar(100)
+}
+
+model quotes {
+  id      Int    @id @default(autoincrement())
+  user_id Int    @unique
+  user    users  @relation(fields: [user_id], references: [id])
+  content String @db.Text
+}
+
+enum Present {
+  Present
+  Absent
+  Uncertain
 }
